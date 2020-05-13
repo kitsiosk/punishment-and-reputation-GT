@@ -28,12 +28,7 @@ for i=1:N
        end
         index = floor( ((i-1)*N + j)/2 );
 
-        if(L(i, j) == 0) 
-            c( index ) = 0;
-        else
-            c( index ) = 1;
-            counter = counter + 1;
-        end
+        c( index ) = L(i, j);
 
         y = (j-1)*length_y + y_hex;
         x_all( index, :) = x;
