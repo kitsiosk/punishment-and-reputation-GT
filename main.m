@@ -67,9 +67,6 @@ printPercentages(L)
 % Every 100 rounds check the frequencies of the previous checkpoint. If
 % they are the same then skip the rest rounds to save time
 prev0 = 0;prev1 = 0;prev2 = 0;prev3 = 0;
-for t = 1:T
-%% INTERACTION STAGE
-
 % Score matrix initialization
 P = zeros(M,N);
 
@@ -156,10 +153,12 @@ plotHex(L)
 title('Final grid')
 
 figure(2)
-tm = (1:T/100)*100;
-plot(tm, perc);
-xlabel('round')
-ylabel('Cooperators percentage')
+hold on
+plot(rArr, frequencies(:, 1), ':')
+plot(rArr, frequencies(:, 2), '--')
+plot(rArr, frequencies(:, 3), '-.')
+plot(rArr, frequencies(:, 4), '-')
+legend('Antisocial', 'Mild', 'Paradoxical', 'Social')
 
 fprintf('Final percentage of cooperators: %0.2f %% \n', ...
     (sum(L(:) == 1) + sum(L(:) == 3)) * 100 / (M * N))
