@@ -3,7 +3,7 @@ clear
 close all
 
 % Type of game: 'Simple', 'Punishment', 'Reputation'
-mode = 'Simple';
+mode = 'Punishment';
 if strcmp(mode, 'Simple')
     % Minimum and maximum strategy numbers (See strategy matrix below)
     minStr = 0;
@@ -19,12 +19,12 @@ elseif strcmp(mode, 'Punishment')
     meet = @meetPunishment;
     
 elseif strcmp(mode, 'Reputation')
-    % meet function handle
-    meet = @meetReputation;
     % Minimum and maximum strategy numbers (See strategy matrix below)
     minStr = 0;
     maxStr = 3;
-    % TODO
+    % meet function handle
+    meet = @meetReputation;
+
 else
     fprintf("Invalid mode entered.\n")
     fprintf("Please enter 'Simple', 'Punishment' or 'Reputation'.\n")
@@ -32,8 +32,8 @@ else
 end
 
 % Dimentions of lattice
-M = 100;
-N = 100;
+M = 200;
+N = 200;
 
 % Number of rounds
 T = 3000;
@@ -113,9 +113,10 @@ for rr = 1:length(rArr)
                 % Difference of the scores compared to the neighbors
                 diff = P(R) - P(i,j);
                 
-                imitationNeighboor = rouletteWheelSelection(diff);
-                if imitationNeighboor ~= -1
-                    L(i,j) = L(R(imitationNeighboor));
+                % Change strategy if there are any positive differences
+                diff(diff < 1e-6) = 0;
+                if any(diff ~= 0) && rand() <= 0.9
+                    L(i,j) = L(R(rouletteWheelSelection(diff)));
                 end
                 
             end
@@ -150,10 +151,10 @@ for rr = 1:length(rArr)
         end
         
     end
-    frequencies(rr, 1) = sum(L(:) == 0);
-    frequencies(rr, 2) = sum(L(:) == 1);
-    frequencies(rr, 3) = sum(L(:) == 2);
-    frequencies(rr, 4) = sum(L(:) == 3);
+    frequencies(rr, 1) = sum(L(:) == 0) / (M*N);
+    frequencies(rr, 2) = sum(L(:) == 1) / (M*N);
+    frequencies(rr, 3) = sum(L(:) == 2) / (M*N);
+    frequencies(rr, 4) = sum(L(:) == 3) / (M*N);
 end
 
 %% Plot results
