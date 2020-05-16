@@ -2,8 +2,30 @@
 clear
 close all
 
-% Type of game: 'simple', 'punishment', 'reputation'
-mode = 'punishment';
+% Type of game: 'Simple', 'Punishment', 'Reputation'
+mode = 'Simple';
+if strcmp(mode, 'Simple')
+    L = unidrnd(2,M,N) - 1;
+    % meet function handle
+    meet = @meetSimple;
+    
+elseif strcmp(mode, 'Punishment')
+    L = randi([0 3], M, N);
+    % meet function handle
+    meet = @meetPunishment;
+    fprintf('Initial percentage of cooperators: %0.2f %% \n', ...
+        (sum(L(:) == 1) + sum(L(:) == 3)) * 100 / (M * N))
+    printPercentages(L)
+    
+elseif strcmp(mode, 'Reputation')
+    % meet function handle
+    meet = @meetReputation;
+    % TODO
+else
+    fprintf("Invalid mode entered.\n")
+    fprintf("Please enter 'Simple', 'Punishment' or 'Reputation'.\n")
+    return
+end
 
 % Dimentions of lattice
 M = 100;
@@ -47,6 +69,13 @@ printPercentages(L)
 prev0 = 0;prev1 = 0;prev2 = 0;prev3 = 0;
 for t = 1:T
 %% INTERACTION STAGE
+
+% Score matrix initialization
+P = zeros(M,N);
+
+for t = 1:T
+    %% INTERACTION STAGE
+    
     % For every point in the lattice
     for i = 1:M
         for j = 1:N
@@ -57,32 +86,23 @@ for t = 1:T
             
             % For every neighbor
             for k = 1:(lR-1)
-                if( strcmp(mode, 'simple') )
-                    P(i,j) = P(i,j) + meet(L(i,j), L(R(k)), L(R(k+1)), r, c);
-                elseif( strcmp(mode, 'punishment') )
-                    P(i,j) = P(i,j) + meetPunish(L(i,j), L(R(k)), L(R(k+1)), ...
-                        r, c, beta, gamma);
-                end     
+                P(i,j) = P(i,j) + meet(L(i,j), L(R(k)), L(R(k+1)), ...
+                    r, c, beta, gamma);
             end
             
             % If there are more than two neighbors,
             % then meet with the last and first neighbor
             % and find the mean score
             if lR > 2
-                if( strcmp(mode, 'simple') )
-                    P(i,j) = P(i,j) + meet(L(i,j), L(R(lR)), L(R(1)), r, c);
-                elseif( strcmp(mode, 'punishment') )
-                    P(i,j) = P(i,j) + meetPunish(L(i,j), L(R(lR)), L(R(1)), ...
-                        r, c, beta, gamma);
-                end
-%                 P(i,j) = P(i,j) + meet(L(i,j),L(R(lR)),L(R(1)),r,c);
+                P(i,j) = P(i,j) + meet(L(i,j), L(R(k)), L(R(k+1)), ...
+                    r, c, beta, gamma);
             end
             P(i,j) = P(i,j) / lR;
-
+            
         end
     end
     
-%% IMITATION/REPRODUCTION STAGE
+    %% IMITATION/REPRODUCTION STAGE
     
     % For every point in the lattice
     for i = 1:M
@@ -93,11 +113,6 @@ for t = 1:T
             
             % Difference of the scores compared to the neighbors
             diff = P(R) - P(i,j);
-            
-%             % Exclude neighbors with lower or equal scores from imitation
-%             negative_diff = diff < 1e-6;
-%             R(negative_diff) = [];
-%             diff(negative_diff) = [];
             
             imitationNeighboor = rouletteWheelSelection(diff);
             if imitationNeighboor ~= -1
@@ -139,6 +154,7 @@ end
 figure(1)
 plotHex(L)
 title('Final grid')
+
 figure(2)
 tm = (1:T/100)*100;
 plot(tm, perc);

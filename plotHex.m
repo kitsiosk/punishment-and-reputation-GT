@@ -1,40 +1,29 @@
 function plotHex(L)
 [M,N] = size(L);
 
-% % Clockwise coordinates of a hexagon. Add one at the end for multiplication
-% % below to work properly
-% x_hex = [0, 1/sqrt(2), 1/sqrt(2)+1, 2/sqrt(2)+1, 1/sqrt(2)+1, 1/sqrt(2)] + 1;
-% y_hex = [1/sqrt(2), 2/sqrt(2), 2/sqrt(2), 1/sqrt(2), 0, 0] + 1;
-% length_x = 1/sqrt(2) + 1;
-% length_y = 1/sqrt(2);
-r = 1/sqrt(2);
-y_hex = 1/2 * [0; 1; 2; 2; 1; 0];    % x-coordinates of the vertices
-x_hex= 1/2 * [2; 2+r; 2; 1; 1-r; 1]; % y-coordinates of the vertices
-length_x = (1+r)/2;
-length_y = 1/2;
+% Clockwise coordinates of a hexagon.
+r = sqrt(3);
+x_hex = [3/2 2 3/2 1/2 0 1/2];      % x-coordinates of the vertices
+y_hex = [r r/2 0 0 r/2 r];          % y-coordinates of the vertices
 
-x = x_hex;
-y = y_hex;
+% Distances between heaxagons
+dist_x = 3/2;
+dist_y = r;
 
-x_all = zeros(N^2, 6);
-y_all = zeros(N^2, 6);
-c = zeros(N^2, 1);
-counter = 0;
-for i=1:N
-    x = (i-1)*length_x + x_hex;
+x_all = zeros(M*N, 6);
+y_all = zeros(M*N, 6);
+c = zeros(M*N, 1);
+
+for i=1:M
     for j=1:N
-       if mod(i+j, 2) == 0
-            continue
-       end
-        index = floor( ((i-1)*N + j)/2 );
-
+        index = i*M + j;
+        
         c( index ) = L(i, j);
-
-        y = (j-1)*length_y + y_hex;
-        x_all( index, :) = x;
-        y_all( index, :) = y;
+        x_all( index, :) = x_hex + (j-1) * dist_x;
+        y_all( index, :) = y_hex + (mod(j+1,2)/2+i-1) * dist_y;
     end
 end
 
 patch(x_all', y_all',  c', 'EdgeColor', 'None')
+
 end
