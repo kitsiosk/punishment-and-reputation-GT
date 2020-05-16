@@ -16,9 +16,9 @@ length_y = 1/2;
 x = x_hex;
 y = y_hex;
 
-x_all = zeros(N^2/2, 6);
-y_all = zeros(N^2/2, 6);
-c = zeros(N^2/2, 1);
+x_all = zeros(N^2, 6);
+y_all = zeros(N^2, 6);
+c = zeros(N^2, 1);
 counter = 0;
 for i=1:N
     x = (i-1)*length_x + x_hex;
