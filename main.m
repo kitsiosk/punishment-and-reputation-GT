@@ -4,6 +4,7 @@ close all
 
 % Type of game: 'Simple', 'Punishment', 'Reputation'
 mode = 'Punishment';
+
 if strcmp(mode, 'Simple')
     % Minimum and maximum strategy numbers (See strategy matrix below)
     minStr = 0;
@@ -32,16 +33,16 @@ else
 end
 
 % Dimentions of lattice
-M = 200;
-N = 200;
+M = 100;
+N = 100;
 
-% Number of rounds
+% Maximum number of rounds
 T = 3000;
 
 % Investment multiplication factor
-% r = 2.2;
 rArr = 1:0.1:3;
 frequencies = zeros(length(rArr), 4);
+
 % Cost of cooperation
 c = 1;
 % Fee of punisher for each defector
@@ -136,6 +137,14 @@ for rr = 1:length(rArr)
                     abs(curr1 - prev1)/(M*N) < epsilon && ...
                     abs(curr2 - prev2)/(M*N) < epsilon && ...
                     abs(curr3 - prev3)/(M*N) < epsilon )
+                
+                % plot lattice for r = 2.2
+                if r == 2.2
+                    figure(1)
+                    plotHex(L)
+                    title('Equalibrium lattice for r=2.2')
+                end
+                
                 break
             end
             
@@ -158,10 +167,6 @@ for rr = 1:length(rArr)
 end
 
 %% Plot results
-figure(1)
-plotHex(L)
-title('Final grid')
-
 figure(2)
 hold on
 plot(rArr, frequencies(:, 1), ':')
