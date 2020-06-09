@@ -1,4 +1,4 @@
-function p = meetPunishment(s1,s2,s3,r,c,beta,gamma)
+function p = meetPunishment(s1,s2,s3,r,c,beta,gamma,~)
 % Single punishment round of public goods game with parameters r, c,
 % beta and gamma
 % s1:        strategy of current player

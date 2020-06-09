@@ -1,4 +1,4 @@
-function p = meetSimple(s1,s2,s3,r,c,~,~)
+function p = meetSimple(s1,s2,s3,r,c,~,~,~)
 % Single round of public goods game with parameters r and c
 % s1:        strategy of current player
 % s2, s3:    strategy of opponents

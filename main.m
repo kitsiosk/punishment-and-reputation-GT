@@ -1,9 +1,10 @@
 %% INITIALIZATION
 clear
-close all
+% close all
+tic
 
 % Type of game: 'Simple', 'Punishment', 'Reputation'
-mode = 'Punishment';
+mode = 'Simple';
 
 if strcmp(mode, 'Simple')
     % Minimum and maximum strategy numbers (See strategy matrix below)
@@ -33,8 +34,8 @@ else
 end
 
 % Dimentions of lattice
-M = 100;
-N = 100;
+M = 50;
+N = 50;
 
 % Maximum number of rounds
 T = 3000;
@@ -49,6 +50,8 @@ c = 1;
 gamma = 1;
 % Fee of defector for each punisher
 beta = 1.5;
+% Probability of revealing strategies
+m = 0.1;
 
 % Score matrix initialization
 P = zeros(M,N);
@@ -87,7 +90,7 @@ for rr = 1:length(rArr)
                 % For every neighbor
                 for k = 1:(lR-1)
                     P(i,j) = P(i,j) + meet(L(i,j), L(R(k)), L(R(k+1)), ...
-                        r, c, beta, gamma);
+                        r, c, beta, gamma, m);
                 end
                 
                 % If there are more than two neighbors,
@@ -95,7 +98,7 @@ for rr = 1:length(rArr)
                 % and find the mean score
                 if lR > 2
                     P(i,j) = P(i,j) + meet(L(i,j), L(R(k)), L(R(k+1)), ...
-                        r, c, beta, gamma);
+                        r, c, beta, gamma, m);
                 end
                 P(i,j) = P(i,j) / lR;
                 
@@ -140,9 +143,9 @@ for rr = 1:length(rArr)
                 
                 % plot lattice for r = 2.2
                 if r == 2.2
-                    figure(1)
+                    figure
                     plotHex(L)
-                    title('Equalibrium lattice for r=2.2')
+                    title([mode,' equalibrium lattice for r=2.2'])
                 end
                 
                 break
@@ -167,7 +170,7 @@ for rr = 1:length(rArr)
 end
 
 %% Plot results
-figure(2)
+figure
 hold on
 plot(rArr, frequencies(:, 1), ':')
 plot(rArr, frequencies(:, 2), '--')
@@ -184,3 +187,5 @@ ylabel('frequencies')
 
 fprintf('Final percentage of cooperators: %0.2f %% \n', ...
     (sum(L(:) == 1) + sum(L(:) == 3)) * 100 / (M * N))
+
+toc
